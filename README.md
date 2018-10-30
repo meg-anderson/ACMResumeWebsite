@@ -3,7 +3,7 @@ This is the resume website for the ACM fundraiser Fall 2018. Created by Meg Ande
 
 In order to run this website locally (ie test it out), create a venv with flask installed (I'm using python 3.5 cause that's what I had installed). 
 
-Navigate to the upper level directory, and use the commands (Linus/Unix you know the drill): 
+Navigate to the upper level directory, and use the commands (Linux/Unix you know the drill): 
 
 ```
 export FLASK_APP=flaskr
