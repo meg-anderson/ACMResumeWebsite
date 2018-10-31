@@ -26,12 +26,16 @@ CREATE TABLE workexperience (
 
 CREATE TABLE skills(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  skilltitle TEXT NOT NULL,
-  skilldescription TEXT
+  author_id INTEGER NOT NULL,
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  title TEXT NOT NULL,
+  description TEXT
 );
 
 CREATE TABLE honors(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  author_id INTEGER NOT NULL,
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   honorstitle TEXT NOT NULL,
   honorswho TEXT,
   honorsbody TEXT NOT NULL

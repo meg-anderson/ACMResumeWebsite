@@ -6,10 +6,12 @@ from werkzeug.exceptions import abort
 from ResumeWebsite.auth import login_required
 from ResumeWebsite.db import get_db
 
-bp = Blueprint('resume', __name__)
+bp = Blueprint('resume', __name__, url_prefix='/resume')
+
 
 @bp.route('/')
 def index():
+
     db = get_db()
 
     experiences = db.execute(
@@ -18,18 +20,20 @@ def index():
         ' ORDER BY created DESC'
     ).fetchall()
 
-    # skills = db.execute(
-    #     'SELECT p.id, skilltitle, skilldescription'
-    #     ' FROM skills p'
-    #     ' ORDER BY created DESC'
-    # ).fetchall()
+    skills = db.execute(
+        # 'SELECT id, title, description, author_id'
+        'SELECT *'
+        ' FROM skills'
+        ' ORDER BY created DESC'
+    ).fetchall()
+
     # honors = db.execute(
     #     'SELECT p.id, honorstitle, honorswho, honorsbody'
     #     ' FROM skills p'
     #     ' ORDER BY created DESC'
     # )
 
-    return render_template('resume/index.html', experiences=experiences)
+    return render_template('resume/index.html', experiences=experiences, skills = skills)
 
 
 @bp.route('/workexp/create', methods=('GET', 'POST'))
@@ -61,56 +65,64 @@ def create():
     return render_template('resume/create.html')
 
 
-def get_post(id, check_author=True):
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
+def get_experience(id, check_author=True):
+
+    db = get_db()
+
+    experience = db.execute(
+        'SELECT w.id, title, who, what, whenexp, author_id, username'
+        ' FROM workexperience w JOIN user u ON w.author_id = u.id'
+        ' WHERE w.id = ?',
         (id,)
     ).fetchone()
 
-    if post is None:
+    if experience is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
-    if check_author and post['author_id'] != g.user['id']:
+    if check_author and experience['author_id'] != g.user['id']:
         abort(403)
 
-    return post
+    return experience
 
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@bp.route('workexp/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    post = get_post(id)
+    experience = get_experience(id)
 
     if request.method == 'POST':
+
         title = request.form['title']
-        body = request.form['body']
+        who = request.form['who']
+        what = request.form['what']
+        whenexp = request.form['whenexp']
         error = None
+
 
         if not title:
             error = 'Title is required.'
 
         if error is not None:
             flash(error)
+
         else:
             db = get_db()
             db.execute(
-                'UPDATE post SET title = ?, body = ?'
+                'UPDATE workexperience SET title = ?, who = ?, what = ?, whenexp = ?'
                 ' WHERE id = ?',
-                (title, body, id)
+                (title, who, what, whenexp, id)
             )
             db.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('resume.index'))
 
-    return render_template('blog/update.html', post=post)
+    return render_template('resume/update.html', experience=experience)
 
 
-@bp.route('/<int:id>/delete', methods=('POST',))
+@bp.route('workexp/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    get_post(id)
+    get_experience(id)
     db = get_db()
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
-    return redirect(url_for('blog.index'))
+    return redirect(url_for('resume.index'))

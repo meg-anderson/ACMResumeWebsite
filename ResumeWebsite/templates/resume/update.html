@@ -1,20 +1,35 @@
 {% extends 'base.html' %}
 
+{% block sections %}
+
 {% block header %}
-  <h1>{% block title %}Edit "{{ post['title'] }}"{% endblock %}</h1>
+  <h1>{% block title %}Edit "{{ experience['title'] }}"{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <form method="post">
     <label for="title">Title</label>
-    <input name="title" id="title"
-      value="{{ request.form['title'] or post['title'] }}" required>
-    <label for="body">Body</label>
-    <textarea name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
+    <br>
+    <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    <br>
+    <label for="who">Company</label>
+    <br>
+    <textarea name="who" id="who">{{ request.form['who'] }}</textarea>
+    <br>
+    <label for="whenexp">From When to When (Format as "April 2018 - May 2019")</label>
+    <br>
+    <textarea name="whenexp" id="whenexp">{{ request.form['what'] }}</textarea>
+    <br>
+    <label for="what">Description of the job and responsibilities</label>
+    <br>
+    <textarea name="what" id="what">{{ request.form['whenexp'] }}</textarea>
+    <br>
     <input type="submit" value="Save">
   </form>
   <hr>
-  <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
+  <form action="{{ url_for('blog.delete', id=experience['id']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
+{% endblock %}
+
 {% endblock %}
