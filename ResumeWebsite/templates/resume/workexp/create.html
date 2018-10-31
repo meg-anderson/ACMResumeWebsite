@@ -3,8 +3,9 @@
 {% block sections %}
 
 {% block header %}
-  <h1>{% block title %}Edit "{{ experience['title'] }}"{% endblock %}</h1>
+  <h1>{% block title %}New Work Experience{% endblock %}</h1>
 {% endblock %}
+
 
 {% block content %}
   <form method="post">
@@ -25,10 +26,6 @@
     <textarea name="what" id="what">{{ request.form['whenexp'] }}</textarea>
     <br>
     <input type="submit" value="Save">
-  </form>
-  <hr>
-  <form action="{{ url_for('blog.delete', id=experience['id']) }}" method="post">
-    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
 {% endblock %}
 

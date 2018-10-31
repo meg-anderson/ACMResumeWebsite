@@ -1,7 +1,7 @@
 {% block header %}
   <h1>{% block title %}Skills{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('resume.create') }}">New</a>
+    <a class="action" href="{{ url_for('resume.create_skill') }}">New</a>
   {% endif %}
 {% endblock %}
 
@@ -10,16 +10,16 @@
     <article class="experience">
       <header>
         <div>
-          <h1>{{ exp['title'] }}</h1>
+          <h1>{{ skill['title'] }}</h1>
         </div>
-          <p class="body">{{ exp['description'] }}</p>
+          <p class="body">{{ skill['description'] }}</p>
         {% if g.user['id'] %}
-          <a class="action" href="{{ url_for('resume.update', id=exp['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('resume.update_skill', id=skill['id']) }}">Edit</a>
         {% endif %}
       </header>
     </article>
     {% if not loop.last %}
-      <hr>
+      <br>
     {% endif %}
   {% endfor %}
 {% endblock %}

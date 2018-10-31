@@ -1,7 +1,7 @@
 {% block header %}
   <h1>{% block title %}WorkExperience{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('resume.create') }}">New</a>
+    <a class="action" href="{{ url_for('resume.create_workexp') }}">New</a>
   {% endif %}
 {% endblock %}
 
@@ -15,12 +15,12 @@
         </div>
           <p class="body">{{ exp['what'] }}</p>
         {% if g.user['id'] %}
-          <a class="action" href="{{ url_for('resume.update', id=exp['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('resume.update_workexp', id=exp['id']) }}">Edit</a>
         {% endif %}
       </header>
     </article>
     {% if not loop.last %}
-      <hr>
+      <br>
     {% endif %}
   {% endfor %}
 {% endblock %}

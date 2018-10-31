@@ -38,7 +38,7 @@ def index():
 
 @bp.route('/workexp/create', methods=('GET', 'POST'))
 @login_required
-def create():
+def create_workexp():
     if request.method == 'POST':
 
         title = request.form['title']
@@ -62,7 +62,7 @@ def create():
             db.commit()
             return redirect(url_for('resume.index'))
 
-    return render_template('resume/create.html')
+    return render_template('resume/workexp/create.html')
 
 
 def get_experience(id, check_author=True):
@@ -87,7 +87,7 @@ def get_experience(id, check_author=True):
 
 @bp.route('workexp/<int:id>/update', methods=('GET', 'POST'))
 @login_required
-def update(id):
+def update_workexp(id):
     experience = get_experience(id)
 
     if request.method == 'POST':
@@ -115,14 +115,101 @@ def update(id):
             db.commit()
             return redirect(url_for('resume.index'))
 
-    return render_template('resume/update.html', experience=experience)
+    return render_template('resume/workexp/update.html', experience=experience)
 
 
 @bp.route('workexp/<int:id>/delete', methods=('POST',))
 @login_required
-def delete(id):
+def delete_workexp(id):
     get_experience(id)
     db = get_db()
     db.execute('DELETE FROM post WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('resume.index'))
+
+@bp.route('/skill/create', methods=('GET', 'POST'))
+@login_required
+def create_skill():
+    if request.method == 'POST':
+
+        title = request.form['title']
+        description = request.form['description']
+        error = None
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'INSERT INTO skills (title, description, author_id)'
+                ' VALUES (?, ?, ?)',
+                (title, description, g.user['id'])
+            )
+            db.commit()
+            return redirect(url_for('resume.index'))
+
+    return render_template('resume/skills/create.html')
+
+
+def get_skill(id, check_author=True):
+
+    db = get_db()
+
+    skill = db.execute(
+        'SELECT s.id, title, description, author_id, username'
+        ' FROM skills s JOIN user u ON s.author_id = u.id'
+        ' WHERE s.id = ?',
+        (id,)
+    ).fetchone()
+
+    if skill is None:
+        abort(404, "Post id {0} doesn't exist.".format(id))
+
+    if check_author and skill['author_id'] != g.user['id']:
+        abort(403)
+
+    return skill
+
+
+@bp.route('skill/<int:id>/update', methods=('GET', 'POST'))
+@login_required
+def update_skill(id):
+    skill = get_skill(id)
+
+    if request.method == 'POST':
+
+        title = request.form['title']
+        description = request.form['description']
+        error = None
+
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE skills SET title = ?, description = ?'
+                ' WHERE id = ?',
+                (title, description, id)
+            )
+            db.commit()
+            return redirect(url_for('resume.index'))
+
+    return render_template('resume/skills/update.html', skill=skill)
+
+
+@bp.route('skill/<int:id>/delete', methods=('POST',))
+@login_required
+def delete_skill(id):
+    get_skill(id)
+    db = get_db()
+    db.execute('DELETE FROM skills WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('resume.index'))
