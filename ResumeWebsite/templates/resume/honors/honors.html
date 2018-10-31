@@ -1,0 +1,26 @@
+{% block header %}
+  <h1>{% block title %}Honors{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('resume.create_honor') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for honor in honors%}
+    <article class="experience">
+      <header>
+        <div>
+          <h1>{{ honor['title'] }}</h1>
+        </div>
+          <p class="body">Given By: {{ honor['givenby'] }}</p>
+          <p class="body">{{ honor['description'] }}</p>
+        {% if g.user['id'] %}
+          <a class="action" href="{{ url_for('resume.update_honor', id=honor['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+    </article>
+    {% if not loop.last %}
+      <br>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

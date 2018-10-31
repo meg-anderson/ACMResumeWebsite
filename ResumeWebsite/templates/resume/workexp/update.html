@@ -10,19 +10,19 @@
   <form method="post">
     <label for="title">Title</label>
     <br>
-    <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    <input name="title" id="title" value="{{ request.form['title'] or experience['title'] }}" required>
     <br>
     <label for="who">Company</label>
     <br>
-    <textarea name="who" id="who">{{ request.form['who'] }}</textarea>
+    <textarea name="who" id="who">{{ request.form['who'] or experience['who'] }}</textarea>
     <br>
     <label for="whenexp">From When to When (Format as "April 2018 - May 2019")</label>
     <br>
-    <textarea name="whenexp" id="whenexp">{{ request.form['what'] }}</textarea>
+    <textarea name="whenexp" id="whenexp">{{ request.form['what'] or experience['what'] }}</textarea>
     <br>
     <label for="what">Description of the job and responsibilities</label>
     <br>
-    <textarea name="what" id="what">{{ request.form['whenexp'] }}</textarea>
+    <textarea name="what" id="what">{{ request.form['whenexp'] or experience['whenexp'] }}</textarea>
     <br>
     <input type="submit" value="Save">
   </form>

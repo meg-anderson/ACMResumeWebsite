@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block sections %}
+
+{% block header %}
+  <h1>{% block title %}New Honor{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+  <form method="post">
+    <label for="title">Title</label>
+    <br>
+    <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    <br>
+    <label for="givenby">Who was this award given by, or what was it associated with? (optional)</label>
+    <br>
+    <textarea name="givenby" id="givenby">{{ request.form['givenby'] }}</textarea>
+    <br>
+    <label for="description">Description (optional)</label>
+    <br>
+    <textarea name="description" id="description">{{ request.form['description'] }}</textarea>
+
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}
+
+{% endblock %}

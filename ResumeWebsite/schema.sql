@@ -36,9 +36,9 @@ CREATE TABLE honors(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  honorstitle TEXT NOT NULL,
-  honorswho TEXT,
-  honorsbody TEXT NOT NULL
+  title TEXT NOT NULL,
+  givenby TEXT,
+  description TEXT NOT NULL
 );
 
 CREATE TABLE post (

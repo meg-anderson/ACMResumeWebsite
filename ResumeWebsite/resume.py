@@ -27,13 +27,13 @@ def index():
         ' ORDER BY created DESC'
     ).fetchall()
 
-    # honors = db.execute(
-    #     'SELECT p.id, honorstitle, honorswho, honorsbody'
-    #     ' FROM skills p'
-    #     ' ORDER BY created DESC'
-    # )
+    honors = db.execute(
+        'SELECT h.id, title, givenby, description, created'
+        ' FROM honors h'
+        ' ORDER BY created DESC'
+    )
 
-    return render_template('resume/index.html', experiences=experiences, skills = skills)
+    return render_template('resume/index.html', experiences=experiences, skills = skills, honors=honors)
 
 
 @bp.route('/workexp/create', methods=('GET', 'POST'))
@@ -211,5 +211,94 @@ def delete_skill(id):
     get_skill(id)
     db = get_db()
     db.execute('DELETE FROM skills WHERE id = ?', (id,))
+    db.commit()
+    return redirect(url_for('resume.index'))
+
+@bp.route('/honor/create', methods=('GET', 'POST'))
+@login_required
+def create_honor():
+    if request.method == 'POST':
+
+        title = request.form['title']
+        givenby = request.form['givenby']
+        description = request.form['description']
+        error = None
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'INSERT INTO honors (title, givenby, description, author_id)'
+                ' VALUES (?, ?, ?, ?)',
+                (title, givenby, description, g.user['id'])
+            )
+            db.commit()
+            return redirect(url_for('resume.index'))
+
+    return render_template('resume/honors/create.html')
+
+
+def get_honor(id, check_author=True):
+
+    db = get_db()
+
+    honor = db.execute(
+        'SELECT h.id, title, givenby, description, author_id, username'
+        ' FROM honors h JOIN user u ON h.author_id = u.id'
+        ' WHERE h.id = ?',
+        (id,)
+    ).fetchone()
+
+    if honor is None:
+        abort(404, "Post id {0} doesn't exist.".format(id))
+
+    if check_author and honor['author_id'] != g.user['id']:
+        abort(403)
+
+    return honor
+
+
+@bp.route('honor/<int:id>/update', methods=('GET', 'POST'))
+@login_required
+def update_honor(id):
+    honor = get_honor(id)
+
+    if request.method == 'POST':
+
+        title = request.form['title']
+        givenby = request.form['givenby']
+        description = request.form['description']
+        error = None
+
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE honors SET title = ?, givenby = ?, description = ?'
+                ' WHERE id = ?',
+                (title, givenby, description, id)
+            )
+            db.commit()
+            return redirect(url_for('resume.index'))
+
+    return render_template('resume/honors/update.html', honor=honor)
+
+
+@bp.route('honor/<int:id>/delete', methods=('POST',))
+@login_required
+def delete_honor(id):
+    get_honor(id)
+    db = get_db()
+    db.execute('DELETE FROM honors WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('resume.index'))
