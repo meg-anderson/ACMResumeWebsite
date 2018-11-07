@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block sections %}
+
 {% block header %}
   <h1>{% block title %}Log In{% endblock %}</h1>
 {% endblock %}
@@ -12,4 +14,6 @@
     <input type="password" name="password" id="password" required>
     <input type="submit" value="Log In">
   </form>
+{% endblock %}
+
 {% endblock %}
